@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -N hpipline_@REP@ 
-#$ -l virtual_free=32G,h_rt=100:00:00
+#$ -l virtual_free=64G,h_rt=10:00:00
 #$ -e hpipline_@REP@.err
 #$ -o hpipline_@REP@.out
 #$ -q long-sl7
