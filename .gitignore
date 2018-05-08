@@ -1,2 +1,6 @@
 *.swp
 *.pyc
+*.fasta
+*.txt
+*.p
+*.sam
