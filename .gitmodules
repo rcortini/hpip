@@ -1,0 +1,3 @@
+[submodule "hpipline"]
+	path = hpipline
+	url = https://github.com/histonemark/hpipline.git
