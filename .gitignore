@@ -6,3 +6,5 @@
 *.txt
 *.p
 *.sam
+*.log
+production/rep*
