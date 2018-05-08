@@ -8,14 +8,13 @@
 #$ -P prj005866
 
 # file names
-genome="/users/gfilion/mcorrales/HPIP/dm4R6/dmel-all-chromosome-r6.15.fasta"
 datadir="/users/gfilion/mcorrales/HPIP"
-linksdir="$datadir/links"
-iPCR_fwd="$linksdir/HPIP_iPCR_@REP@_fwd.fastq"
-iPCR_rev="$linksdir/HPIP_iPCR_@REP@_Rev.fastq"
+genome="$datadir/dm4R6/dmel-all-chromosome-r6.15.fasta"
 prom_bcd="$datadir/libraries/prom_bcd.p"
-cDNA="$linksdir/HPIP_cDNA_@REP@.fastq"
-gDNA="$linksdir/Toy_gDNA_@REP@.fastq"
+iPCR_fwd="HPIP_iPCR_@REP@_fwd.fastq"
+iPCR_rev="HPIP_iPCR_@REP@_Rev.fastq"
+cDNA="HPIP_cDNA_@REP@.fastq"
+gDNA="HPIP_gDNA_@REP@.fastq"
 
 # source cluster environment
 source $HOME/.cluster_env

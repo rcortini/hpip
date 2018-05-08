@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# general stuff
+datadir="/users/gfilion/mcorrales/HPIP"
+linksdir="$datadir/links"
 source ~/work/tools/my_env.sh
 
 # get the forcing parameter
@@ -43,5 +46,17 @@ for rep in $repnames; do
   cat $pbs_in |\
     sed -e s,@REP@,$rep,g |\
   tee > $pbs_out
+
+  # copy the pipeline file to the directory
   cp $hpipline_dir/hpipline.py $rep
+
+  # copy the links to the input files to the current directory
+  iPCR_fwd="$linksdir/HPIP_iPCR_"$rep"_fwd.fastq"
+  iPCR_rev="$linksdir/HPIP_iPCR_"$rep"_Rev.fastq"
+  cDNA="$linksdir/HPIP_cDNA_"$rep".fastq"
+  gDNA="$linksdir/HPIP_gDNA_"$rep".fastq"
+  cp -d $iPCR_fwd $rep
+  cp -d $iPCR_rev $rep
+  cp -d $cDNA $rep
+  cp -d $gDNA $rep
 done
