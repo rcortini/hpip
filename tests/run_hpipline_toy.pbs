@@ -1,0 +1,31 @@
+#!/bin/bash
+#$ -N hpipline_toy 
+#$ -l virtual_free=32G,h_rt=100:00:00
+#$ -e hpipline_toy.err
+#$ -o hpipline_toy.out
+#$ -q long-sl7
+#$ -cwd
+#$ -P prj005866
+
+# file names
+genome="/users/gfilion/mcorrales/HPIP/dm4R6/dmel-all-chromosome-r6.15.fasta"
+iPCR_fwd="Toy_iPCR_rep1_fwd.fastq"
+iPCR_rev="Toy_iPCR_rep1_Rev.fastq"
+prom_bcd="prom_bcd.p"
+cDNA="Toy_cDNA_rep1.fastq"
+gDNA="Toy_gDNA_rep1.fastq"
+
+# source cluster environment
+source $HOME/.cluster_env
+
+# activate python virtual environment
+workon cpython2711
+
+# python environment
+export PYTHONPATH=$HOME/soft/python
+
+# run
+python hpipline.py $iPCR_fwd $iPCR_rev $prom_bcd $genome $cDNA $gDNA 
+
+# deactivate python virtual environment
+deactivate
