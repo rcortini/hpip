@@ -1,0 +1,24 @@
+#!/bin/bash
+#$ -N hpipline_toy 
+#$ -e test_starcode.err
+#$ -o test_starcode.out
+#$ -q short-sl7
+#$ -cwd
+#$ -P prj005866
+
+# source cluster environment
+source $HOME/.cluster_env
+
+# activate python virtual environment
+workon cpython2711
+
+# python environment
+export PYTHONPATH=$HOME/soft/python
+
+echo $PATH
+
+# run
+starcode
+
+# deactivate python virtual environment
+deactivate
