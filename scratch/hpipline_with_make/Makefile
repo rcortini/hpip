@@ -42,15 +42,20 @@ iPCR_insertions=$(iPCR_basename)_insertions.txt
 # program names
 hpipline=python hpipline.py
 
-.PHONY : all clean cleanall
+.PHONY : all clean cleanintermediate cleanlog cleanall
 
 all : $(iPCR_insertions)
 
-clean :
+cleanlog :
+	rm -rf *.log
+
+cleanintermediate :
 	rm -rf \
 	  $(INTERMEDIATE_IPCR)\
 	  $(INTERMEDIATE_CDNA)\
 	  $(INTERMEDIATE_GDNA)
+
+clean : cleanintermediate cleanlog
 
 cleanall : clean
 	rm -rf $(iPCR_insertions)
@@ -59,35 +64,34 @@ cleanall : clean
 # EXTRACT READS FROM PAIRED-END SEQ
 ####################################
 $(iPCR_fasta) : $(iPCR_fwd) $(iPCR_rev)
-	$(hpipline) extract_reads_from_PE_fastq $^
+	@$(hpipline) extract_reads_from_PE_fastq $^
 
 ####################################
 # MAP AND FILTER READS
 ####################################
 $(iPCR_sam) : $(iPCR_fasta) $(genome)
-	$(hpipline) call_bwa_mapper_on_fasta_file $^
+	@$(hpipline) call_bwa_mapper_on_fasta_file $^ 2> $(subst .sam,.bwa.log,$@)
 
 $(iPCR_filtered) : $(iPCR_sam)
-	$(hpipline) filter_mapped_reads $<
+	@$(hpipline) filter_mapped_reads $<
 
 ####################################
 # STARCODE ON FILTERED
 ####################################
 $(iPCR_starcode) : $(iPCR_filtered)
-	$(hpipline) call_starcode_on_filtered_file $<
+	@$(hpipline) call_starcode_on_filtered_file $< 2> $(subst .txt,.starcode.log,$@)
 
 ####################################
 # STARCODE ON FASTQ
 ####################################
 $(gDNA_starcode) $(gDNA_spikes_starcode) : $(gDNA_fastq)
-	$(hpipline) call_starcode_on_fastq_file $<
+	@$(hpipline) call_starcode_on_fastq_file $< 2> $(subst .txt,.log,$@)
 
 $(cDNA_starcode) $(cDNA_spikes_starcode) : $(cDNA_fastq)
-	$(hpipline) call_starcode_on_fastq_file $<
+	@$(hpipline) call_starcode_on_fastq_file $< 2> $(subst .txt,.log,$@)
 
 ####################################
 # COLLECT INTEGRATIONS
 ####################################
 $(iPCR_insertions) : $(iPCR_starcode) $(iPCR_sam) $(prom_bcd_dict) $(cDNA_starcode) $(cDNA_spikes_starcode) $(gDNA_starcode) $(gDNA_spikes_starcode)
-	echo $^
-	$(hpipline) collect_integrations $^
+	@$(hpipline) collect_integrations $^ > collect_integrations.log

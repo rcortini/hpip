@@ -215,7 +215,6 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
     counts the frequency that each barcode is found in the mapped data
     even for the non-mapping barcodes."""
 
-    LOGFNAME = 'hpiplog.txt'
 
     # temporary fix to work with makefile
     args = [(fname_cDNA,fname_cDNA_spike),
@@ -323,6 +322,4 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
                         outf.write('\t'.join(array) + '\n')
                     except IndexError:
                         continue
-    with open(LOGFNAME, 'a') as f:
-        f.write('%s: mapped:%d, unmapped:%d\n' %
-                (fname_mapped, mapped, unmapped))
+    print('%s: mapped:%d, unmapped:%d\n'%(fname_mapped, mapped, unmapped))

@@ -15,9 +15,9 @@ try :
                                       "Input file '%s' does not exist"%(f))
                 sys.exit(1)
         # if we are here, everything is fine and we can call the method
-        hpiplib.log_message(program_name,'%s %s'%(method_name,
-                                                  ' '.join([a for a in args])))
+        hpiplib.log_message(program_name,'%s: START'%(method_name))
         method_to_call(*args)
+        hpiplib.log_message(program_name,'%s: DONE'%(method_name))
     except AttributeError :
         hpiplib.error_message(program_name,"Unrecognized method '%s'"%(method_name))
         sys.exit(1)
