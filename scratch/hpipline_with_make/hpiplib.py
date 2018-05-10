@@ -95,9 +95,6 @@ def extract_reads_from_PE_fastq(fname_iPCR_PE1, fname_iPCR_PE2):
                 continue
             outf.write('>%s\n%s\n' % (brcd, genome))
 
-    return fname_fasta
-
-
 def call_bwa_mapper_on_fasta_file(fname_fasta, fname_genome_index):
     """This function takes the barcodes and sequence extracted from the
     sequencing files and calls bwa-mem to do the mapping with default
@@ -117,9 +114,6 @@ def call_bwa_mapper_on_fasta_file(fname_fasta, fname_genome_index):
         if int(map_process) < 0:
             sys.stderr.write("Error during the mapping\n")
 
-    return outfname_mapped
-
-
 def filter_mapped_reads(fname_mapped):
     """ This fuctions extracts the barcodes from the mapped file to feed
         them to starcode"""
@@ -136,9 +130,6 @@ def filter_mapped_reads(fname_mapped):
                 continue  # Get rid of header
             items = line.split()
             g.write('%s\n' % items[0])
-
-    return outfname_filtered
-
 
 def call_starcode_on_filtered_file(fname_filtered):
     """This function takes the barcodes contained in the first column of
@@ -164,12 +155,6 @@ def call_starcode_on_filtered_file(fname_filtered):
     if int(starcode_process) < 0:
             sys.stderr.write("Error during Starcode call on: %s\n"
                              % fname_starcode)
-
-    return fname_starcode
-
-
-# Counting reads in gDNA and cDNA  ###############################
-
 
 def call_starcode_on_fastq_file(fname_fastq):
     ''' Extracts the gDNA,cDNA reads and spikes and runs stracode on them.'''
@@ -236,11 +221,6 @@ def call_starcode_on_fastq_file(fname_fastq):
     # Delete temporary files.
     os.unlink(barcode_tempf.name)
     os.unlink(spike_tempf.name)
-
-    return (brcd_outfname, spk_outfname)
-
-# Generate expression table #######################################
-
 
 def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary, *args):
     """This function reads the starcode output and changes all the barcodes
@@ -360,5 +340,3 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
     with open(LOGFNAME, 'a') as f:
         f.write('%s: mapped:%d, unmapped:%d\n' %
                 (fname_mapped, mapped, unmapped))
-    return
-

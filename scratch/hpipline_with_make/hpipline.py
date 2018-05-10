@@ -1,5 +1,5 @@
 from __future__ import print_function
-import sys
+import sys, os
 import hpiplib
 
 program_name = 'hpipline'
@@ -9,8 +9,15 @@ try :
     args = sys.argv[2:]
     try :
         method_to_call = getattr(hpiplib,method_name)
-        hpiplib.log_message(method_to_call,args)
-        # method_to_call(args)
+        for f in args :
+            if not os.path.exists(f) :
+                hpiplib.error_message(program_name,
+                                      "Input file '%s' does not exist"%(f))
+                sys.exit(1)
+        # if we are here, everything is fine and we can call the method
+        hpiplib.log_message(program_name,'%s %s'%(method_name,
+                                                  ' '.join([a for a in args])))
+        method_to_call(*args)
     except AttributeError :
         hpiplib.error_message(program_name,"Unrecognized method '%s'"%(method_name))
         sys.exit(1)
