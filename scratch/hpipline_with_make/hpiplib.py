@@ -67,9 +67,7 @@ def extract_reads_from_PE_fastq(fname_iPCR_PE1, fname_iPCR_PE2):
     # sequence is the CATG after the barcode, which is matched exactly.
 
     # Open a file to write
-    fname_fasta = re.sub(r'[A-Za-z]+_iPCR_([\w]+)_[a-zA-Z0-9]+.fastq',
-                         r'iPCR_\1.fasta',
-                         fname_iPCR_PE1)
+    fname_fasta = fname_iPCR_PE1.split('_fwd.fastq')[0] + '.fasta'
 
     # Substitution failed, append '.fasta' to avoid name collision.
     if fname_fasta == fname_iPCR_PE1:
@@ -208,7 +206,9 @@ def call_starcode_on_fastq_file(fname_fastq):
     os.unlink(barcode_tempf.name)
     os.unlink(spike_tempf.name)
 
-def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary, *args):
+def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
+                        fname_cDNA, fname_cDNA_spike,
+                        fname_gDNA, fname_gDNA_spike):
     """This function reads the starcode output and changes all the barcodes
     mapped by their canonicals while it calculates the mapped distance
     rejecting multiple mapping integrations or unmmaped ones. It also
@@ -216,6 +216,10 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
     even for the non-mapping barcodes."""
 
     LOGFNAME = 'hpiplog.txt'
+
+    # temporary fix to work with makefile
+    args = [(fname_cDNA,fname_cDNA_spike),
+            (fname_gDNA,fname_gDNA_spike)]
 
     # First, open the barcode-promoter dictionary
     bcd_promd = pickle.load(open(fname_bcd_dictionary, "rb"))

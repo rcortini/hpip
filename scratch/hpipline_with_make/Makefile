@@ -18,8 +18,8 @@ iPCR_filtered=$(iPCR_basename)_filtered.txt
 iPCR_sam=$(iPCR_basename).sam
 cDNA_starcode=$(cDNA_basename)_starcode.txt
 cDNA_spikes_starcode=$(cDNA_basename)_spikes_starcode.txt
-cDNA_starcode=$(cDNA_basename)_starcode.txt
-cDNA_spikes_starcode=$(cDNA_basename)_spikes_starcode.txt
+gDNA_starcode=$(gDNA_basename)_starcode.txt
+gDNA_spikes_starcode=$(gDNA_basename)_spikes_starcode.txt
 
 # groups of files
 INTERMEDIATE_IPCR=\
@@ -89,4 +89,5 @@ $(cDNA_starcode) $(cDNA_spikes_starcode) : $(cDNA_fastq)
 # COLLECT INTEGRATIONS
 ####################################
 $(iPCR_insertions) : $(iPCR_starcode) $(iPCR_sam) $(prom_bcd_dict) $(cDNA_starcode) $(cDNA_spikes_starcode) $(gDNA_starcode) $(gDNA_spikes_starcode)
+	echo $^
 	$(hpipline) collect_integrations $^
