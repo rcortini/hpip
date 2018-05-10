@@ -50,7 +50,6 @@ class gzopen(object):
     def next(self):
         return next(self.f)
 
-LOGFNAME = 'hpiplog.txt'
 
 
 class FormatException(Exception):
@@ -256,6 +255,8 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
     rejecting multiple mapping integrations or unmmaped ones. It also
     counts the frequency that each barcode is found in the mapped data
     even for the non-mapping barcodes."""
+
+    LOGFNAME = 'hpiplog.txt'
 
     # First, open the barcode-promoter dictionary
     bcd_promd = pickle.load(open(fname_bcd_dictionary, "rb"))
