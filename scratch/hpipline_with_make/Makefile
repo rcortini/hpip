@@ -40,8 +40,7 @@ INTERMEDIATE_GDNA=\
 iPCR_insertions=$(iPCR_basename)_insertions.txt
 
 # program names
-hpipline=echo
-starcode=echo
+hpipline=python hpipline.py
 
 .PHONY : all clean cleanall
 
@@ -60,34 +59,34 @@ cleanall : clean
 # EXTRACT READS FROM PAIRED-END SEQ
 ####################################
 $(iPCR_fasta) : $(iPCR_fwd) $(iPCR_rev)
-	$(hpipline) "extract_reads_from_PE_fastq $^" > $@
+	$(hpipline) extract_reads_from_PE_fastq $^
 
 ####################################
 # MAP AND FILTER READS
 ####################################
 $(iPCR_sam) : $(iPCR_fasta) $(genome)
-	$(hpipline) "call_bwa_mapper_on_fasta_file $<" > $@
+	$(hpipline) call_bwa_mapper_on_fasta_file $^
 
 $(iPCR_filtered) : $(iPCR_sam)
-	$(hpipline) "filter_mapped_reads $<" > $@
+	$(hpipline) filter_mapped_reads $<
 
 ####################################
 # STARCODE ON FILTERED
 ####################################
 $(iPCR_starcode) : $(iPCR_filtered)
-	$(hpipline) "call_starcode_on_filtered_file $<" > $@
+	$(hpipline) call_starcode_on_filtered_file $<
 
 ####################################
 # STARCODE ON FASTQ
 ####################################
 $(gDNA_starcode) $(gDNA_spikes_starcode) : $(gDNA_fastq)
-	$(hpipline) "call_starcode_on_fastq_file $<" > $@
+	$(hpipline) call_starcode_on_fastq_file $<
 
 $(cDNA_starcode) $(cDNA_spikes_starcode) : $(cDNA_fastq)
-	$(hpipline) "call_starcode_on_fastq_file $<" > $@
+	$(hpipline) call_starcode_on_fastq_file $<
 
 ####################################
 # COLLECT INTEGRATIONS
 ####################################
 $(iPCR_insertions) : $(iPCR_starcode) $(iPCR_sam) $(prom_bcd_dict) $(cDNA_starcode) $(cDNA_spikes_starcode) $(gDNA_starcode) $(gDNA_spikes_starcode)
-	$(hpipline) "collect_integrations $^" > $(iPCR_insertions)
+	$(hpipline) collect_integrations $^

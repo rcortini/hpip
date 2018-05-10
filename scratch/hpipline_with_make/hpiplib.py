@@ -75,10 +75,6 @@ def extract_reads_from_PE_fastq(fname_iPCR_PE1, fname_iPCR_PE2):
     if fname_fasta == fname_iPCR_PE1:
         fname_fasta = fname_iPCR_PE1 + '.fasta'
 
-    # Skip if file exists.
-    if os.path.exists(fname_fasta):
-        return fname_fasta
-
     with gzopen(fname_iPCR_PE1) as f, gzopen(fname_iPCR_PE2) as g, \
             open(fname_fasta, 'w') as outf:
         # Aggregate iterator of f,g iterators -> izip(f,g).
@@ -102,10 +98,6 @@ def call_bwa_mapper_on_fasta_file(fname_fasta, fname_genome_index):
 
     outfname_mapped = re.sub(r'\.fasta', '.sam', fname_fasta)
 
-    # Skip if file exists.
-    if os.path.exists(outfname_mapped):
-        return outfname_mapped
-
     # System call to `bwa mem` with arguments and check the exit code.
     with open(outfname_mapped, 'w') as f:
         map_process = subprocess.Popen(['bwa', 'mem', '-t4','-L0,0',
@@ -120,9 +112,6 @@ def filter_mapped_reads(fname_mapped):
 
     outfname_filtered = re.sub(r'\.sam', '_filtered.txt', fname_mapped)
 
-    # Skip if file exists.
-    if os.path.exists(outfname_filtered):
-        return outfname_filtered
 
     with open(fname_mapped) as f, open(outfname_filtered, 'w') as g:
         for line in f:
@@ -190,33 +179,30 @@ def call_starcode_on_fastq_file(fname_fastq):
     barcode_tempf.close()
     spike_tempf.close()
 
-    # Skip if file exists.
-    if not os.path.exists(brcd_outfname):
-        # Call `starcode`.
-        starcode_process = subprocess.call([
-          'starcode',
-          '-t4',
-          '--print-clusters',
-          '-i', barcode_tempf.name,
-          '-o', brcd_outfname,
-          ])
+    # Call `starcode`.
+    starcode_process = subprocess.call([
+      'starcode',
+      '-t4',
+      '--print-clusters',
+      '-i', barcode_tempf.name,
+      '-o', brcd_outfname,
+      ])
 
-        if int(starcode_process) < 0:
-            sys.stderr.write("Error during Starcode call on: %s\n"
-                             % barcode_tempf.name)
+    if int(starcode_process) < 0:
+        sys.stderr.write("Error during Starcode call on: %s\n"
+                         % barcode_tempf.name)
 
-    if not os.path.exists(spk_outfname):
-        starcode_process = subprocess.call([
-            'starcode',
-            '-t4',
-            '--print-clusters',
-            '-i', spike_tempf.name,
-            '-o', spk_outfname,
-        ])
+    starcode_process = subprocess.call([
+        'starcode',
+        '-t4',
+        '--print-clusters',
+        '-i', spike_tempf.name,
+        '-o', spk_outfname,
+    ])
 
-        if int(starcode_process) < 0:
-            sys.stderr.write("Error during Starcode call on: %s\n"
-                             % spk_outfname)
+    if int(starcode_process) < 0:
+        sys.stderr.write("Error during Starcode call on: %s\n"
+                         % spk_outfname)
 
     # Delete temporary files.
     os.unlink(barcode_tempf.name)
@@ -239,10 +225,6 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
     # Substitution failed, append '_insertions.txt' to avoid name conflict.
     if fname_insertions_table == fname_mapped:
         fname_insertions_table = fname_mapped + '_insertions.txt'
-
-    # Skip if file exists.
-    if os.path.exists(fname_insertions_table):
-        return
 
     def dist(intlist):
         intlist.sort()
