@@ -3,6 +3,7 @@
 *.swp
 *.pyc
 *.fasta
+*.fastq
 *.txt
 *.p
 *.sam
