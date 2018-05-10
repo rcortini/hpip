@@ -1,20 +1,25 @@
 # input files
-prom_bcd_dict=prom_bcd.txt
-genome=genome.txt
-iPCR_fwd=iPCR_fwd.fastq
-iPCR_rev=iPCR_Rev.fastq
-cDNA_fastq=cDNA.fastq
-gDNA_fastq=gDNA.fastq
+prom_bcd_dict=prom_bcd.p
+genome=/mnt/ant-login/mcorrales/HPIP/dm4R6/dmel-all-chromosome-r6.15.fasta
+iPCR_basename=Toy_iPCR_rep1
+cDNA_basename=Toy_cDNA_rep1
+gDNA_basename=Toy_gDNA_rep1
+
+# build file names based on base names
+iPCR_fwd=$(iPCR_basename)_fwd.fastq
+iPCR_rev=$(iPCR_basename)_Rev.fastq
+cDNA_fastq=$(cDNA_basename).fastq
+gDNA_fastq=$(gDNA_basename).fastq
 
 # intermediate files
-iPCR_fasta=iPCR.fasta
-iPCR_starcode=iPCR_starcode.txt
-iPCR_filtered=iPCR_filtered.txt
-iPCR_sam=iPCR_sam.txt
-cDNA_starcode=cDNA_starcode.txt
-cDNA_spikes_starcode=cDNA_spikes_starcode.txt
-gDNA_starcode=gDNA_starcode.txt
-gDNA_spikes_starcode=gDNA_spikes_starcode.txt
+iPCR_fasta=$(iPCR_basename).fasta
+iPCR_starcode=$(iPCR_basename)_starcode.txt
+iPCR_filtered=$(iPCR_basename)_filtered.txt
+iPCR_sam=$(iPCR_basename).sam
+cDNA_starcode=$(cDNA_basename)_starcode.txt
+cDNA_spikes_starcode=$(cDNA_basename)_spikes_starcode.txt
+cDNA_starcode=$(cDNA_basename)_starcode.txt
+cDNA_spikes_starcode=$(cDNA_basename)_spikes_starcode.txt
 
 # groups of files
 INTERMEDIATE_IPCR=\
@@ -32,13 +37,13 @@ INTERMEDIATE_GDNA=\
 	     $(gDNA_spikes_starcode)
 
 # final target
-iPCR_insertions=iPCR_insertions.txt
+iPCR_insertions=$(iPCR_basename)_insertions.txt
 
 # program names
 hpipline=echo
 starcode=echo
 
-.PHONY : all clean
+.PHONY : all clean cleanall
 
 all : $(iPCR_insertions)
 
@@ -47,6 +52,9 @@ clean :
 	  $(INTERMEDIATE_IPCR)\
 	  $(INTERMEDIATE_CDNA)\
 	  $(INTERMEDIATE_GDNA)
+
+cleanall : clean
+	rm -rf $(iPCR_insertions)
 
 ####################################
 # EXTRACT READS FROM PAIRED-END SEQ
