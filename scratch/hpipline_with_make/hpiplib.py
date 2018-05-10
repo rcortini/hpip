@@ -13,17 +13,17 @@ import seeq
 def time_string () :
     return time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime ())
 
-def error_message (program_name, message) :
-    full_message = "%s %s: ERROR: %s"%(time_string (), program_name, message)
-    print (full_message, file=sys.stderr)
+def error_message(program_name, message) :
+    full_message = "%s %s:   ERROR: %s"%(time_string(), program_name, message)
+    print(full_message, file=sys.stderr)
 
-def log_message (program_name, message) :
-    full_message = "%s %s: INFO: %s"%(time_string (), program_name, message)
-    print (full_message)
+def log_message(program_name, message) :
+    full_message = "%s %s:    INFO: %s"%(time_string(), program_name, message)
+    print(full_message)
 
-def warn_message (program_name, message) :
-    full_message = "%s %s: WARNING: %s"%(time_string (), program_name, message)
-    print (full_message)
+def warn_message(program_name, message) :
+    full_message = "%s %s: WARNING: %s"%(time_string(), program_name, message)
+    print(full_message)
 
 class gzopen(object):
     def __init__(self, fname):
@@ -50,19 +50,12 @@ class gzopen(object):
     def next(self):
         return next(self.f)
 
-
-
 class FormatException(Exception):
     pass
-
-
-# Mapping Pipeline on the cluster ##########################################
-
 
 def extract_reads_from_PE_fastq(fname_iPCR_PE1, fname_iPCR_PE2):
     """This function takes the 2 pair-end sequencing files and extracts the
     barcode making sure that the other read contains the transposon."""
-
     MIN_BRCD = 15
     MAX_BRCD = 25
     MIN_GENOME = 15

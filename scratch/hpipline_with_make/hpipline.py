@@ -9,7 +9,8 @@ try :
     args = sys.argv[2:]
     try :
         method_to_call = getattr(hpiplib,method_name)
-        method_to_call(args)
+        hpiplib.log_message(method_to_call,args)
+        # method_to_call(args)
     except AttributeError :
         hpiplib.error_message(program_name,"Unrecognized method '%s'"%(method_name))
         sys.exit(1)
