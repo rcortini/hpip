@@ -1,9 +1,29 @@
-#!/usr/bin/env python
-# -*- coding:utf-8 -*-
-
+from __future__ import print_function
 import gzip
-import sys
+import time, sys, errno, os
+import pickle
+import re
+import subprocess
+import tempfile
+from collections import defaultdict
+from itertools import izip
 import seeq
+
+# utility functions
+def time_string () :
+    return time.strftime("[%Y-%m-%d %H:%M:%S]", time.localtime ())
+
+def error_message (program_name, message) :
+    full_message = "%s %s: ERROR: %s"%(time_string (), program_name, message)
+    print (full_message, file=sys.stderr)
+
+def log_message (program_name, message) :
+    full_message = "%s %s: INFO: %s"%(time_string (), program_name, message)
+    print (full_message)
+
+def warn_message (program_name, message) :
+    full_message = "%s %s: WARNING: %s"%(time_string (), program_name, message)
+    print (full_message)
 
 class gzopen(object):
     def __init__(self, fname):
@@ -29,19 +49,6 @@ class gzopen(object):
         return iter(self.f)
     def next(self):
         return next(self.f)
-
-# Standard library packages.
-import os
-import pickle
-import re
-import subprocess
-import tempfile
-
-from collections import defaultdict
-from itertools import izip
-
-# Others.
-import seeq
 
 LOGFNAME = 'hpiplog.txt'
 
@@ -360,17 +367,4 @@ def collect_integrations(fname_starcode_out, fname_mapped, fname_bcd_dictionary,
         f.write('%s: mapped:%d, unmapped:%d\n' %
                 (fname_mapped, mapped, unmapped))
     return
-    # Done.
 
-
-def main(fname_fastq1, fname_fastq2, fname_bcd_dictionary, fname_genome_index, *args):
-    fname_fasta = extract_reads_from_PE_fastq(fname_fastq1, fname_fastq2)
-    fname_mapped = call_bwa_mapper_on_fasta_file(fname_fasta, fname_genome_index)
-    fname_filtered = filter_mapped_reads(fname_mapped)
-    fname_starcode = call_starcode_on_filtered_file(fname_filtered)
-    fnames_extra = [call_starcode_on_fastq_file(fname) for fname in args]
-    collect_integrations(fname_starcode, fname_mapped, fname_bcd_dictionary, *fnames_extra)
-
-
-if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], *sys.argv[5:])
