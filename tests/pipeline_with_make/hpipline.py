@@ -1,1 +1,1 @@
-/mnt/ant-login/rcortini/work/CRG/projects/hpip/hpipline/hpipline.py
+../../hpipline/hpipline.py
