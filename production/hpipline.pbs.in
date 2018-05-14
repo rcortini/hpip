@@ -5,16 +5,8 @@
 #$ -o hpipline_@REP@.out
 #$ -q long-sl7
 #$ -cwd
+#$ -pe smp 8
 #$ -P prj005866
-
-# file names
-datadir="/users/gfilion/mcorrales/HPIP"
-genome="$datadir/dm4R6/dmel-all-chromosome-r6.15.fasta"
-prom_bcd="$datadir/libraries/prom_bcd.p"
-iPCR_fwd="HPIP_iPCR_@REP@_fwd.fastq"
-iPCR_rev="HPIP_iPCR_@REP@_Rev.fastq"
-cDNA="HPIP_cDNA_@REP@.fastq"
-gDNA="HPIP_gDNA_@REP@.fastq"
 
 # source cluster environment
 source $HOME/.cluster_env
@@ -26,7 +18,7 @@ workon cpython2711
 export PYTHONPATH=$HOME/soft/python
 
 # run
-python hpipline.py $iPCR_fwd $iPCR_rev $prom_bcd $genome $cDNA $gDNA 
+make -j8 > @REP@.log
 
 # deactivate python virtual environment
 deactivate

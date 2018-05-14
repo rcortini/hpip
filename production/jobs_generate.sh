@@ -39,7 +39,7 @@ for rep in $repnames; do
     exit 1
   fi
 
-  # now we can create the directories and create the scripts
+  # now we can create the directories and create the Makefile
   rm -rf $rep
   mkdir -p $rep
   pbs_out=$rep/hpipline.pbs
@@ -47,8 +47,11 @@ for rep in $repnames; do
     sed -e s,@REP@,$rep,g |\
   tee > $pbs_out
 
-  # copy the pipeline file to the directory
-  cp $hpipline_dir/hpipline.py $rep
+  cat Makefile |\
+    sed -e s,@iPCR_basename@,"HPIP_iPCR_$rep",g |\
+    sed -e s,@cDNA_basename@,"HPIP_cDNA_$rep",g |\
+    sed -e s,@gDNA_basename@,"HPIP_gDNA_$rep",g |\
+  tee > $rep/Makefile
 
   # copy the links to the input files to the current directory
   iPCR_fwd="$linksdir/HPIP_iPCR_"$rep"_fwd.fastq"
@@ -59,4 +62,7 @@ for rep in $repnames; do
   cp -d $iPCR_rev $rep
   cp -d $cDNA $rep
   cp -d $gDNA $rep
+
+  # link the hpipline.py to directory
+  ln -s $hpipline_dir/hpipline.py $rep/hpipline.py
 done
