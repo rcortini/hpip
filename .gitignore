@@ -10,3 +10,4 @@
 *.sam
 *.log
 production/rep*
+*checkpoint.ipynb
