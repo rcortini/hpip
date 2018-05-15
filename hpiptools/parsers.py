@@ -28,7 +28,7 @@ class HPIPReplicate :
         self.name = name
         production_dir = '%s/production'%(hpip_root_dir)
         fname = '%s/%s/HPIP_iPCR_%s_insertions.txt'%(production_dir,name,name)
-        if os.path.exists(rep_fname) :
+        if os.path.exists(fname) :
             self.data = load_hpip_results(fname)
 
 class HPIPMatrix :
