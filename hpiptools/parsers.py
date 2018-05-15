@@ -52,17 +52,23 @@ class HPIPMatrix :
     def map_name_to_idx(self,name) :
         return self._prom_to_idx[name]
     def __getitem__(self,name) :
-        if name == 'Colision' :
-            return self.C
-        try :
-            return self.M[self.map_name_to_idx(name)]
-        except KeyError :
-            print "Error: %s does not exist"%(name)
-    def __setitem__(self,name,val) :
-        if name == 'Colision' :
-            self.C = val
-        else :
+        if isinstance(name,basestring) :
+            if name == 'Colision' :
+                return self.C
             try :
-                self.M[self.map_name_to_idx(name)] = val
+                return self.M[self.map_name_to_idx(name)]
             except KeyError :
                 print "Error: %s does not exist"%(name)
+        else :
+            return self.M[name]
+    def __setitem__(self,name,val) :
+        if isinstance(name,basestring) :
+            if name == 'Colision' :
+                self.C = val
+            else :
+                try :
+                    self.M[self.map_name_to_idx(name)] = val
+                except KeyError :
+                    print "Error: %s does not exist"%(name)
+        else :
+            self.M[name] = val
