@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 def load_hpip_results(fname) :
     """
