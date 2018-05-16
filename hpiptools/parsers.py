@@ -1,7 +1,8 @@
 import numpy as np
 import os
+from numpy.lib.recfunctions import append_fields
 
-def load_hpip_results(fname) :
+def load_hpip_results(fname,rep_name) :
     """
     Loads the results of a HPIP experiment replicate into a data structure that
     contains all the information, accessible via a numpy array.
@@ -16,8 +17,9 @@ def load_hpip_results(fname) :
         ('cDNA',np.int32),
         ('gDNA',np.int32)
     ]
-    return np.genfromtxt(fname, dtype=np.dtype(hpip_dtype))
-
+    A = np.genfromtxt(fname, dtype=np.dtype(hpip_dtype))
+    B = append_fields(A, 'rep', [rep_name]*A.size, dtypes='S8')
+    return B.data
 
 class HPIPReplicate :
     """
