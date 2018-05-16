@@ -14,13 +14,48 @@ def filter_and_name_insertion(insertion,
             insertion['promoter'] = ht.plate_to_prom[p]
             return insertion
 
-
-def normalize_expression(insertion) :
-    if insertion['gDNA']==0 :
-        # TODO: decide what to do here
-        return None
-    else :
-        return insertion['mRNA']/float(insertion['gDNA'])
+def normalize_insertions(insertions) :
+    # we first get the sum of all the reads of mRNA and gDNA, per replicate
+    reps = np.unique(insertions['rep'])
+    mRNA_sum = {}
+    gDNA_sum = {}
+    for rep in reps :
+        # get replicate-specific insertions
+        rep_mask = insertions['rep']==rep
+        # get sum of mRNA, sum of gDNA, and average mRNA of the replicate
+        mRNA_sum[rep] = insertions[rep_mask]['mRNA'].sum()
+        gDNA_sum[rep] = insertions[rep_mask]['gDNA'].sum()
+    # then we initialize the "normalized" array, and fill it with the stuff
+    # that was already contained in the passed array
+    normalized_dtype = [
+        ('barcode','S32'),
+        ('chr','S4'),
+        ('coord',np.int32),
+        ('strand','S2'),
+        ('promoter',np.int32),
+        ('rep','S8'),
+        ('expression',float)
+    ]
+    normalized = np.zeros(insertions.size,dtype=np.dtype(normalized_dtype))
+    keep = ['barcode','chr','coord','strand','promoter','rep']
+    for param in keep :
+        normalized[param] = insertions[param]
+    # finally, we normalize the expression
+    nan_mask = insertions['gDNA'] == 0
+    # insertions with zero gDNA counts have NAN expression
+    expression = np.zeros(insertions.size)
+    expression[nan_mask] = np.nan
+    # the others, we do log(eps/<eps>), specific for each replicate, where
+    # eps = (mRNA/mRNA_sum)/(gDNA/gDNA_sum)
+    for rep in reps :
+        rep_mask = insertions['rep']==rep
+        mask = np.logical_and(~nan_mask,rep_mask)
+        eps = (insertions[mask]['mRNA']/float(mRNA_sum[rep]))/\
+              (insertions[mask]['gDNA']/float(gDNA_sum[rep]))
+        eps_mean = eps.mean()
+        expression[mask] = np.log2(eps/eps_mean)
+    normalized['expression'] = expression
+    return normalized
 
 # check for proper invocation
 if len(sys.argv) < 2:
@@ -53,25 +88,7 @@ filtered = np.array(filtered)
 del merged
 
 # NORMALIZE
-normalized_dtype = [
-    ('barcode','S32'),
-    ('chr','S4'),
-    ('coord',np.int32),
-    ('strand','S2'),
-    ('promoter',np.int32),
-    ('rep','S8'),
-    ('expression',float)
-]
-normalized = np.zeros(filtered.size,dtype=np.dtype(normalized_dtype))
-keep = ['barcode','chr','coord','strand','promoter','rep']
-for i,insertion in enumerate(filtered) :
-    for param in keep :
-        normalized[i][param] = insertion[param]
-    n = normalize_expression(insertion)
-    if n is None :
-        n = -100
-    normalized[i]['expression'] = n
-del filtered
+normalized = normalize_insertions(filtered)
 
 # WRITE RESULTS
 
