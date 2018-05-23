@@ -90,7 +90,7 @@ for fname in starcodedfn:
             if bcd in barcodesd[prom_lib_id]:
                 barcodesd[prom_lib_id][bcd].append(promname)
                 continue
-            barcodesd[bcd] = [promname]
+            barcodesd[prom_lib_id][bcd] = [promname]
 
 # Save the dict in a pickle object using protocol 2
 
