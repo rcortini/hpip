@@ -13,3 +13,4 @@
 production/rep*
 *checkpoint.ipynb
 tests/pipeline_with_make/Makefile
+data
