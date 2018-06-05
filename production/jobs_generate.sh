@@ -29,40 +29,28 @@ hpipline_commit=$(get_last_git_commit $hpipline_dir)
 log_message "Running against hpipline commit $hpipline_commit" >> $generate_log
 
 # now we can create the jobs
-repnames="rep1 rep2"
+# repnames="rep1 rep2"
+repnames="rep1"
 pbs_in="hpipline.pbs.in"
 for rep in $repnames; do
-  # security first: don't do anything if the directories already exist, and the
-  # user is not willingly forcing creating the directories again
-  if test -e $rep && [ $force -ne "1" ] ; then
-    echo "Directories exist, exiting" 1>&2
-    exit 1
-  fi
+  for lib in $(cat lib_names.txt); do 
+    # now we can create the directories and create the Makefile
+    # pbs_out=$rep/hpipline.pbs
+    # cat $pbs_in |\
+      # sed -e s,@REP@,$rep,g |\
+    # tee > $pbs_out
 
-  # now we can create the directories and create the Makefile
-  rm -rf $rep
-  mkdir -p $rep
-  pbs_out=$rep/hpipline.pbs
-  cat $pbs_in |\
-    sed -e s,@REP@,$rep,g |\
-  tee > $pbs_out
+    if [ "$lib" != "Undetermined" ]; then
+      libname=lib$lib
+    else
+      libname=$lib
+    fi
 
-  cat Makefile |\
-    sed -e s,@iPCR_basename@,"HPIP_iPCR_$rep",g |\
-    sed -e s,@cDNA_basename@,"HPIP_cDNA_$rep",g |\
-    sed -e s,@gDNA_basename@,"HPIP_gDNA_$rep",g |\
-  tee > $rep/Makefile
+    cat Makefile.in |\
+      sed -e s,@LIBNAME@,$lib,g |\
+    tee > $rep/$libname/Makefile
 
-  # copy the links to the input files to the current directory
-  iPCR_fwd="$linksdir/HPIP_iPCR_"$rep"_fwd.fastq"
-  iPCR_rev="$linksdir/HPIP_iPCR_"$rep"_Rev.fastq"
-  cDNA="$linksdir/HPIP_cDNA_"$rep".fastq"
-  gDNA="$linksdir/HPIP_gDNA_"$rep".fastq"
-  cp -d $iPCR_fwd $rep
-  cp -d $iPCR_rev $rep
-  cp -d $cDNA $rep
-  cp -d $gDNA $rep
-
-  # link the hpipline.py to directory
-  ln -s $hpipline_dir/hpipline.py $rep/hpipline.py
+    # link the hpipline.py to directory
+    # ln -s $hpipline_dir/hpipline.py $rep/hpipline.py
+  done 
 done
