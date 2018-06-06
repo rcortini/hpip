@@ -1,24 +1,12 @@
 #!/bin/bash
-#$ -N hpipline_@REP@ 
-#$ -l virtual_free=64G,h_rt=10:00:00
-#$ -e hpipline_@REP@.err
-#$ -o hpipline_@REP@.out
+#$ -N @REP@ 
+#$ -l virtual_free=64G,h_rt=2:00:00
+#$ -e @REP@.err
+#$ -o @REP@.out
 #$ -q long-sl7
 #$ -cwd
-#$ -pe smp 8
+#$ -pe smp 16
 #$ -P prj005866
 
-# source cluster environment
-source $HOME/.cluster_env
-
-# activate python virtual environment
-workon cpython2711
-
-# python environment
-export PYTHONPATH=$HOME/soft/python
-
 # run
-make -j8 > @REP@.log
-
-# deactivate python virtual environment
-deactivate
+make -j4 > @REP@.log

@@ -46,11 +46,19 @@ done
 # replicate names
 repnames="rep1 rep2"
 
+# source PBS script for rep computing
+pbs_in="hpipline.pbs.in"
+
 for rep in $repnames; do
   # replicate-level Makefile creation
   cat $makefile_rep |\
     sed -e s,@libs@,"$libnames",g |\
   tee > $rep/Makefile
+
+  # replicate-level PBS script creation
+  cat $pbs_in |\
+    sed -e s,@REP@,"$rep",g |\
+  tee > $rep/hpipline.pbs
 
   for libname in $libnames; do 
     # library-level Makefile creation
