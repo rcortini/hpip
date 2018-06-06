@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # general stuff
-datadir="/users/gfilion/mcorrales/HPIP"
-linksdir="$datadir/links"
 source ~/work/tools/my_env.sh
 
 # get the forcing parameter
@@ -28,29 +26,36 @@ fi
 hpipline_commit=$(get_last_git_commit $hpipline_dir)
 log_message "Running against hpipline commit $hpipline_commit" >> $generate_log
 
-# now we can create the jobs
-# repnames="rep1 rep2"
-repnames="rep1"
-pbs_in="hpipline.pbs.in"
+# get source Makefiles names
+makefile_top=$hpipline_dir/Makefile_top
+makefile_rep=$hpipline_dir/Makefile_rep
+makefile_lib=$hpipline_dir/Makefile_lib
+
+# get libs
+libs=$(cat lib_names.txt)
+libnames=""
+for lib in $libs; do
+  if [ "$lib" != "Undetermined" ]; then
+    libname=lib$lib
+  else
+    libname=$lib
+  fi
+  libnames="$libnames $libname"
+done
+
+# replicate names
+repnames="rep1 rep2"
+
 for rep in $repnames; do
-  for lib in $(cat lib_names.txt); do 
-    # now we can create the directories and create the Makefile
-    # pbs_out=$rep/hpipline.pbs
-    # cat $pbs_in |\
-      # sed -e s,@REP@,$rep,g |\
-    # tee > $pbs_out
+  # replicate-level Makefile creation
+  cat $makefile_rep |\
+    sed -e s,@libs@,"$libnames",g |\
+  tee > $rep/Makefile
 
-    if [ "$lib" != "Undetermined" ]; then
-      libname=lib$lib
-    else
-      libname=$lib
-    fi
-
-    cat Makefile.in |\
-      sed -e s,@LIBNAME@,$lib,g |\
+  for libname in $libnames; do 
+    # library-level Makefile creation
+    cat $makefile_lib |\
+      sed -e s,@LIBNAME@,$libname,g |\
     tee > $rep/$libname/Makefile
-
-    # link the hpipline.py to directory
-    # ln -s $hpipline_dir/hpipline.py $rep/hpipline.py
   done 
 done
