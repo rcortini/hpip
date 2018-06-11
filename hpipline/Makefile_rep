@@ -1,8 +1,0 @@
-libs = @libs@
-
-default : all
-
-$(libs) ::
-	$(MAKE) -C $@ $(MAKECMDGOALS)
-
-all clean : $(libs)
